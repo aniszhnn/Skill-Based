@@ -1,0 +1,20 @@
+import socket
+
+def main():
+    server_host = "192.168.15.135"
+    server_port = 8888
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        client_socket.connect((server_host, server_port))
+        # Receive the quote from the server
+        data = client_socket.recv(1024)
+        quote = data.decode()
+        print("Received quote of the day:", quote)
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        client_socket.close()
+
+if __name__ == "__main__":
+    main()
