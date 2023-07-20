@@ -1,0 +1,63 @@
+Server:
+
+import socket
+import threading
+import random
+
+# quotes
+quotes = [
+    "If thing go wrong, don’t go with them",
+    "I dewll in possibility",
+    "Stay foolish to stay insane"
+]
+
+def handle_client(client_socket):
+    try:
+        # Send a random quote to the client
+        quote = random.choice(quotes)
+        client_socket.send(quote.encode())
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        client_socket.close()
+
+def main():
+    server_host = "0.0.0.0"
+    server_port = 8888
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((server_host, server_port))
+    server_socket.listen(5)
+    print("QOTD server is listening on port 8888...")
+    while True:
+        client_socket, client_address = server_socket.accept()
+        print("Connection established with:", client_address)
+        # Create a new thread to handle the client request
+        client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+        client_thread.start()
+
+if __name__ == "__main__":
+    main()
+
+Client:
+
+import socket
+
+def main():
+    server_host = "192.168.81.129"
+    server_port = 8888
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        client_socket.connect((server_host, server_port))
+        # Receive the quote from the server
+        data = client_socket.recv(1024)
+        quote = data.decode()
+        print("Received quote of the day:", quote)
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        client_socket.close()
+
+if __name__ == "__main__":
+    main()
+
